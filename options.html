@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>自动写reflect模板设置</title>
+    <link rel="stylesheet" href="options.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>自动写reflect模板设置</h1>
+            <div class="help-container" id="usage-help-container">
+                <span class="help-icon" id="usage-help-icon">?</span>
+                <div class="usage-help-content" id="usage-help-content">
+                    <h3>使用说明</h3>
+                    <p>使用;;;或；；；来实现分隔不同的模板，每个输入框，可以定义无上限个模板。自动填充的时候，会随机选择一个模板自动填入reflect。</p>
+                    <p>比如：</p>
+                    <p>这样可以定义三个模板：<span class="example-text">今天写了一篇page。;;;今天提了两个建议;;;今天完成了LH</span></p>
+                    <p>这样也可以定义三个模板：</p>
+                    <pre class="example-text">1. 今天写了一篇page
+2. 今天提了两个建议
+3. 完成了LH
+；；；
+1. 发了10封af邮件
+2. 做了一个网站
+；；；
+1. 优化了landing page
+2. 写了两篇博客</pre>
+                </div>
+            </div>
+        </div>
+        <form id="template-form">
+            <div class="form-group">
+                <label for="work-summary">
+                    Work summary（每日工作总结）
+                    <span class="help-icon" data-img="image/1.jpg">?</span>
+                </label>
+                <img class="help-img" id="img-work-summary" src="image/1.jpg" alt="帮助图片" style="display:none;">
+                <textarea id="work-summary" rows="4" placeholder="请输入每日工作总结模板"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="what-learned">
+                    What did I learn（今天我学到了什么）
+                    <span class="help-icon" data-img="image/2.jpg">?</span>
+                </label>
+                <img class="help-img" id="img-what-learned" src="image/2.jpg" alt="帮助图片" style="display:none;">
+                <textarea id="what-learned" rows="4" placeholder="请输入今天学到的内容模板"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="small-mistakes">
+                    Small mistakes I made（我犯了什么错误）
+                    <span class="help-icon" data-img="image/3.jpg">?</span>
+                </label>
+                <img class="help-img" id="img-small-mistakes" src="image/3.jpg" alt="帮助图片" style="display:none;">
+                <textarea id="small-mistakes" rows="4" placeholder="请输入错误总结模板"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="weekly-summary">
+                    Summarize your weekly（本周工作总结）
+                    <span class="help-icon" data-img="image/4.jpg">?</span>
+                </label>
+                <img class="help-img" id="img-weekly-summary" src="image/4.jpg" alt="帮助图片" style="display:none;">
+                <textarea id="weekly-summary" rows="4" placeholder="请输入本周工作总结模板"></textarea>
+            </div>
+            <div class="button-group">
+                <button type="button" id="save-btn">保存</button>
+                <button type="button" id="reset-btn">重置</button>
+            </div>
+        </form>
+    </div>
+    <script src="options.js"></script>
+</body>
+</html>

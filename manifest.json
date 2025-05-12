@@ -1,0 +1,33 @@
+{
+  "manifest_version": 3,
+  "name": "自动写reflect",
+  "version": "1.0.0",
+  "description": "为 reflect 自动填写日报内容并支持自定义模板。",
+  "icons": {
+    "16": "icon/icon16.png",
+    "48": "icon/icon48.png",
+    "128": "icon/icon128.png"
+  },
+  "permissions": [
+    "storage",
+    "scripting"
+  ],
+  "host_permissions": [
+    "https://www.reflect.today/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icon/icon16.png",
+      "48": "icon/icon48.png",
+      "128": "icon/icon128.png"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.reflect.today/*"],
+      "js": ["content.js"]
+    }
+  ],
+  "options_page": "options.html"
+}
