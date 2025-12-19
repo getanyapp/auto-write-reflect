@@ -225,8 +225,48 @@ function createAutoFillButton() {
         btn.style.boxShadow = '0 4px 15px rgba(46, 204, 113, 0.4)';
     };
 
+    // 创建临时输入框
+    const input = document.createElement('textarea');
+    input.id = 'ai-reflect-temp-input';
+    input.placeholder = '（可选填）简单概括今日重点工作或特定内容，AI将围绕这些内容生成...';
+    
+    Object.assign(input.style, {
+        position: 'fixed',
+        bottom: '30px', // 与按钮底部对齐
+        right: '160px', // 位于按钮左侧（按钮大约占120px+间距）
+        zIndex: '10000',
+        width: '180px', // 宽度变窄
+        height: '46px', // 高度调整为与按钮近似
+        padding: '8px 12px',
+        backgroundColor: 'rgba(30, 60, 90, 0.9)', // 半透明暗蓝色
+        color: 'white',
+        border: '1px solid rgba(255, 255, 255, 0.3)',
+        borderRadius: '8px',
+        fontSize: '14px',
+        resize: 'none',
+        outline: 'none',
+        boxShadow: '0 4px 15px rgba(0, 0, 0, 0.2)',
+        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
+    });
+    
+    // 输入框悬停效果
+    input.onfocus = () => {
+        input.style.border = '1px solid rgba(255, 255, 255, 0.8)';
+        input.style.backgroundColor = 'rgba(30, 60, 90, 0.95)';
+    };
+    input.onblur = () => {
+        input.style.border = '1px solid rgba(255, 255, 255, 0.3)';
+        input.style.backgroundColor = 'rgba(30, 60, 90, 0.9)';
+    };
+
+    document.body.appendChild(input);
+
     // 点击事件
     btn.addEventListener('click', async function() {
+        // 获取临时输入框的内容
+        const tempInput = document.getElementById('ai-reflect-temp-input');
+        const additionalContext = tempInput ? tempInput.value.trim() : '';
+        
         // 添加加载动画效果
         const originalText = btn.innerHTML;
         btn.innerHTML = '生成内容中...';
@@ -260,16 +300,25 @@ function createAutoFillButton() {
             // 这里为了简化，我们硬编码 config.js 的内容，实际开发中建议通过 background script 通信获取
             // 或者将 config.js 作为 web_accessible_resources 引入
             const AI_CONFIG = {
-                BASE_URL: 'xxx',
-                CHAT_URL: 'xxx',
+                BASE_URL: 'https://xiaoai.plus/v1',
+                CHAT_URL: 'https://xiaoai.plus/v1/chat/completions',
                 MODEL: 'gpt-4o-mini',
                 TEMPERATURE: 0.7,
-                API_KEY: 'xxx'
+                API_KEY: 'sk-34Z6GYVrNqdIsI6vGkg8WM34QS6v7kIZTvMgl07Q7d6ERuyJ'
             };
 
             // 2. 查找页面元素并准备任务
             const tasks = [];
             const badgeTask = []; // 特殊处理徽章
+            
+            // 定义需要添加额外上下文的字段
+            const contextAwareFields = [
+                'user_workSummary',
+                'user_learn',
+                'user_cantSolve',
+                'user_mistakes',
+                'user_didToday'
+            ];
 
             for (const [key, mapping] of Object.entries(FIELD_MAPPING)) {
                 // 检查开关是否开启
@@ -309,7 +358,13 @@ function createAutoFillButton() {
                 if (element || mapping.type === 'multi_text' || mapping.type === 'structured_text') {
                     if (mapping.type === 'text') {
                         // 文本任务：添加到生成队列
-                        const prompt = userPrompts[key];
+                        let prompt = userPrompts[key];
+                        
+                        // 如果有额外输入，且当前字段在支持列表中，则追加上下文
+                        if (additionalContext && contextAwareFields.includes(key)) {
+                            prompt += `\n\n【重要补充】本次生成请务必包含或围绕以下内容进行：${additionalContext}`;
+                        }
+                        
                         if (prompt) {
                             tasks.push({
                                 key,
@@ -320,7 +375,7 @@ function createAutoFillButton() {
                     } else if (mapping.type === 'multi_text') {
                         // 多文本任务：一次生成，分割填入
                         const elements = document.querySelectorAll(mapping.selector);
-                        const prompt = userPrompts[key];
+                        let prompt = userPrompts[key];
                         
                         if (prompt && elements.length > 0) {
                             // 构造新的提示词，要求 AI 返回 JSON 数组格式
@@ -485,4 +540,3 @@ if (document.readyState === 'loading') {
 } else {
     createAutoFillButton();
 }
-
